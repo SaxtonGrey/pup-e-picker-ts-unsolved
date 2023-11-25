@@ -1,92 +1,108 @@
+import React, { useState, useEffect } from "react";
 import { DogCard } from "../Shared/DogCard";
-import { dogPictures } from "../dog-pictures";
+import { Requests } from "../api";
+import { Dog } from "../types";
+import { toast } from "react-hot-toast";
 
-// Right now these dogs are constant, but in reality we should be getting these from our server
-export const FunctionalDogs = () => {
+interface FunctionalDogProps {
+  filter: string;
+  getFavoriteCount: (arg0: number, arg1: number) => void;
+}
+
+export const FunctionalDogs = ({
+  filter,
+  getFavoriteCount,
+}: FunctionalDogProps) => {
+  const [activeDogs, setActiveDogs] = useState<Dog[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let data: Dog[] = await Requests.getAllDogs();
+      let favorites = 0;
+      let unFavorites = 0;
+      data.map((dog) => {
+        if (dog.isFavorite) {
+          favorites += 1;
+        } else unFavorites += 1;
+      });
+      getFavoriteCount(favorites, unFavorites);
+
+      switch (filter) {
+        case "favorited":
+          data = data.filter((dog) => dog.isFavorite);
+          break;
+        case "unfavorited":
+          data = data.filter((dog) => !dog.isFavorite);
+          break;
+        default:
+          break;
+      }
+
+      setActiveDogs(data);
+    };
+
+    fetchData();
+  }, [filter]);
+
   return (
-    //  the "<> </>"" are called react fragments, it's like adding all the html inside
-    // without adding an actual html element
     <>
-      <DogCard
-        dog={{
-          id: 1,
-          image: dogPictures.BlueHeeler,
-          description: "Example Description",
-          isFavorite: false,
-          name: "Cute Blue Heeler",
-        }}
-        key={1}
-        onTrashIconClick={() => {
-          alert("clicked trash");
-        }}
-        onHeartClick={() => {
-          alert("clicked heart");
-        }}
-        onEmptyHeartClick={() => {
-          alert("clicked empty heart");
-        }}
-        isLoading={false}
-      />
-      <DogCard
-        dog={{
-          id: 2,
-          image: dogPictures.Boxer,
-          description: "Example Description",
-          isFavorite: false,
-          name: "Cute Boxer",
-        }}
-        key={2}
-        onTrashIconClick={() => {
-          alert("clicked trash");
-        }}
-        onHeartClick={() => {
-          alert("clicked heart");
-        }}
-        onEmptyHeartClick={() => {
-          alert("clicked empty heart");
-        }}
-        isLoading={false}
-      />
-      <DogCard
-        dog={{
-          id: 3,
-          image: dogPictures.Chihuahua,
-          description: "Example Description",
-          isFavorite: false,
-          name: "Cute Chihuahua",
-        }}
-        key={3}
-        onTrashIconClick={() => {
-          alert("clicked trash");
-        }}
-        onHeartClick={() => {
-          alert("clicked heart");
-        }}
-        onEmptyHeartClick={() => {
-          alert("clicked empty heart");
-        }}
-        isLoading={false}
-      />
-      <DogCard
-        dog={{
-          id: 4,
-          image: dogPictures.Corgi,
-          description: "Example Description",
-          isFavorite: false,
-          name: "Cute Corgi",
-        }}
-        key={4}
-        onTrashIconClick={() => {
-          alert("clicked trash");
-        }}
-        onHeartClick={() => {
-          alert("clicked heart");
-        }}
-        onEmptyHeartClick={() => {
-          alert("clicked empty heart");
-        }}
-        isLoading={false}
-      />
+      {activeDogs.map((dog) => (
+        <DogCard
+          key={dog.id}
+          dog={dog}
+          onTrashIconClick={() => {
+            setIsLoading(true);
+            Requests.deleteDog(dog.id)
+              .then(() => {
+                setActiveDogs((prevDogs) =>
+                  prevDogs.filter((d) => d.id !== dog.id)
+                );
+                toast.success("Dog Deleted Successfully!");
+              })
+              .catch((error) => {
+                toast.error("Error deleting dog:", error.message);
+                // Handle the error if needed
+              });
+            setIsLoading(false);
+          }}
+          onHeartClick={() => {
+            setIsLoading(true);
+            Requests.updateDog({ ...dog, isFavorite: false }, dog.id)
+              .then(() => {
+                setActiveDogs((prevDogs) =>
+                  prevDogs.map((d) =>
+                    d.id === dog.id ? { ...d, isFavorite: false } : d
+                  )
+                );
+                toast.success("Dog Unfavorited Successfully!");
+              })
+              .catch((error) => {
+                toast.error("Error updating dog:", error.message);
+                // Handle the error if needed
+              });
+            setIsLoading(false);
+          }}
+          onEmptyHeartClick={() => {
+            setIsLoading(true);
+            Requests.updateDog({ ...dog, isFavorite: true }, dog.id)
+              .then(() => {
+                setActiveDogs((prevDogs) =>
+                  prevDogs.map((d) =>
+                    d.id === dog.id ? { ...d, isFavorite: true } : d
+                  )
+                );
+                toast.success("Dog Favorited Successfully!");
+              })
+              .catch((error) => {
+                toast.error("Error updating dog:", error.message);
+                // Handle the error if needed
+              });
+            setIsLoading(false);
+          }}
+          isLoading={isLoading}
+        />
+      ))}
     </>
   );
 };
