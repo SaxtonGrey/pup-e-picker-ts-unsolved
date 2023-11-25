@@ -42,23 +42,18 @@ class ClassCreateDogForm extends Component<
     };
 
     Requests.postDog(newDog)
-      .then((createdDog) => {
+      .then(() => {
         toast.success("Dog created!");
-        console.log("New dog created:", createdDog);
-
-        // Reset form inputs
         this.setState({
           nameInput: "",
           descriptionInput: "",
           pictureValue: "",
         });
 
-        // Trigger the parent component's success callback
         this.props.onSubmitSuccess();
       })
       .catch((error) => {
-        toast.error("Error creating dog");
-        console.error("Error creating dog:", error);
+        toast.error("Error creating dog", error);
       });
   };
 

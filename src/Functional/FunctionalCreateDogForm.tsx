@@ -27,17 +27,15 @@ export const FunctionalCreateDogForm = ({
     };
 
     Requests.postDog(newDog)
-      .then((createdDog) => {
+      .then(() => {
         toast.success("Dog created!");
-        console.log("New dog created:", createdDog);
         setNameInput("");
         setDescriptionInput("");
         setPictureValue("");
         onSubmitSuccess();
       })
       .catch((error) => {
-        toast.error("Error creating dog");
-        console.error("Error creating dog:", error);
+        toast.error("Error creating dog", error);
       });
   };
 
