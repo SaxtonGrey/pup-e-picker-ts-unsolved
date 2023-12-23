@@ -4,15 +4,8 @@
       "name": "Isadore",
       "image": "/assets/dalmation.png",
       "description": "Southeast suspiciously Moroccan yellow Berge West Tasty payment",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 1
-    },
-    {
-      "name": "Danika",
-      "image": "/assets/corgi.png",
-      "description": "Berkshire violet person Card Polestar",
-      "isFavorite": true,
-      "id": 2
     },
     {
       "name": "Reggie",
@@ -32,21 +25,21 @@
       "name": "Veronica",
       "image": "/assets/chihuahua.avif",
       "description": "sympathetically Strategist compressing West Southeast District whiteboard around",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 5
     },
     {
       "name": "Estefania",
       "image": "/assets/blue-heeler.png",
       "description": "Steel where contract East Technician",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 6
     },
     {
       "name": "Jarrett",
       "image": "/assets/corgi.png",
       "description": "abrade Account Bicycle Neutrois to yuck Southwest",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 7
     },
     {
@@ -88,35 +81,35 @@
       "name": "Amber",
       "image": "/assets/dalmation.png",
       "description": "Agender leverage nourish Group Virginia Cisgender Minnesota Southeast",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 13
     },
     {
       "name": "Carley",
       "image": "/assets/corgi.png",
       "description": "virtual synthesizing UDP Yttrium Paradigm Refined Electronic",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 14
     },
     {
       "name": "Jessy",
       "image": "/assets/dalmation.png",
       "description": "online Functionality lux gray Northeast",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 15
     },
     {
       "name": "Jeremy",
       "image": "/assets/corgi.png",
       "description": "unripe drat fussy Rap teal",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 16
     },
     {
       "name": "Ines",
       "image": "/assets/corgi.png",
       "description": "Mauritania East Barium Ruthenium Tantalum Dysprosium Bicycle Producer",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 17
     },
     {
@@ -137,14 +130,14 @@
       "name": "Dude dog",
       "description": "the dudest dog",
       "image": "/assets/cowardly.png",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 20
     },
     {
       "name": "Mr Dog",
       "description": "the guy thats a dog dude",
       "image": "/assets/dalmation.png",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 21
     },
     {

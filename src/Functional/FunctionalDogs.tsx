@@ -1,105 +1,107 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DogCard } from "../Shared/DogCard";
 import { Requests } from "../api";
 import { Dog } from "../types";
 import { toast } from "react-hot-toast";
+import { SelectedComponent } from "../types";
 
 interface FunctionalDogProps {
-  filter: string;
-  getFavoriteCount: (arg0: number, arg1: number) => void;
+  selectedComponent: SelectedComponent;
+  handleFavoriteCount: (data: Dog[]) => void;
 }
 
 export const FunctionalDogs = ({
-  filter,
-  getFavoriteCount,
+  selectedComponent,
+  handleFavoriteCount,
 }: FunctionalDogProps) => {
-  const [activeDogs, setActiveDogs] = useState<Dog[]>([]);
+  const [allDogs, setAllDogs] = useState<Dog[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      let data: Dog[] = await Requests.getAllDogs();
-      let favorites = 0;
-      let unFavorites = 0;
-      data.map((dog) => {
-        if (dog.isFavorite) {
-          favorites += 1;
-        } else unFavorites += 1;
-      });
-      getFavoriteCount(favorites, unFavorites);
-
-      switch (filter) {
-        case "favorited":
-          data = data.filter((dog) => dog.isFavorite);
-          break;
-        case "unfavorited":
-          data = data.filter((dog) => !dog.isFavorite);
-          break;
-        default:
-          break;
+      setIsLoading(true);
+      try {
+        let data: Dog[] = await Requests.getAllDogs();
+        setAllDogs(data);
+        handleFavoriteCount(data);
+      } catch (error) {
+        console.error("Error fetching data");
+      } finally {
+        setIsLoading(false);
       }
-
-      setActiveDogs(data);
     };
-
     fetchData();
-  }, [filter]);
+  }, []);
+
+  const handleTrashIconClick = async (dog: Dog) => {
+    setIsLoading(true);
+    try {
+      await Requests.deleteDog(dog.id);
+      setAllDogs((prevDogs) => prevDogs.filter((d) => d.id !== dog.id));
+      toast.success("Dog Deleted Successfully!");
+    } catch (error) {
+      toast.error("Error deleting dog");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleHeartClick = async (dog: Dog) => {
+    setIsLoading(true);
+    try {
+      await Requests.updateDog({ ...dog, isFavorite: false }, dog.id);
+      setAllDogs((prevDogs) =>
+        prevDogs.map((d) => (d.id === dog.id ? { ...d, isFavorite: false } : d))
+      );
+    } catch (error) {
+      toast.error("Error updating dog");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmptyHeartClick = async (dog: Dog) => {
+    setIsLoading(true);
+    try {
+      await Requests.updateDog({ ...dog, isFavorite: true }, dog.id);
+      setAllDogs((prevDogs) =>
+        prevDogs.map((d) => (d.id === dog.id ? { ...d, isFavorite: true } : d))
+      );
+    } catch (error) {
+      toast.error("Error updating dog");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFavoriteCount(allDogs);
+  }, [allDogs]);
+
+  const filteredDogs = allDogs.filter((dog): boolean => {
+    switch (selectedComponent) {
+      case "favorited":
+        return dog.isFavorite;
+      case "unfavorited":
+        return !dog.isFavorite;
+      case "createDogForm":
+        return false;
+      case "dogs":
+        return true;
+      default:
+        return true;
+    }
+  });
 
   return (
     <>
-      {activeDogs.map((dog) => (
+      {filteredDogs.map((dog) => (
         <DogCard
           key={dog.id}
           dog={dog}
-          onTrashIconClick={() => {
-            setIsLoading(true);
-            Requests.deleteDog(dog.id)
-              .then(() => {
-                setActiveDogs((prevDogs) =>
-                  prevDogs.filter((d) => d.id !== dog.id)
-                );
-                toast.success("Dog Deleted Successfully!");
-              })
-              .catch((error) => {
-                toast.error("Error deleting dog:", error.message);
-                // Handle the error if needed
-              });
-            setIsLoading(false);
-          }}
-          onHeartClick={() => {
-            setIsLoading(true);
-            Requests.updateDog({ ...dog, isFavorite: false }, dog.id)
-              .then(() => {
-                setActiveDogs((prevDogs) =>
-                  prevDogs.map((d) =>
-                    d.id === dog.id ? { ...d, isFavorite: false } : d
-                  )
-                );
-                toast.success("Dog Unfavorited Successfully!");
-              })
-              .catch((error) => {
-                toast.error("Error updating dog:", error.message);
-                // Handle the error if needed
-              });
-            setIsLoading(false);
-          }}
-          onEmptyHeartClick={() => {
-            setIsLoading(true);
-            Requests.updateDog({ ...dog, isFavorite: true }, dog.id)
-              .then(() => {
-                setActiveDogs((prevDogs) =>
-                  prevDogs.map((d) =>
-                    d.id === dog.id ? { ...d, isFavorite: true } : d
-                  )
-                );
-                toast.success("Dog Favorited Successfully!");
-              })
-              .catch((error) => {
-                toast.error("Error updating dog:", error.message);
-                // Handle the error if needed
-              });
-            setIsLoading(false);
-          }}
+          onTrashIconClick={() => handleTrashIconClick(dog)}
+          onHeartClick={() => handleHeartClick(dog)}
+          onEmptyHeartClick={() => handleEmptyHeartClick(dog)}
           isLoading={isLoading}
         />
       ))}

@@ -3,134 +3,126 @@ import { DogCard } from "../Shared/DogCard";
 import { Requests } from "../api";
 import { Dog } from "../types";
 import { toast } from "react-hot-toast";
+import { SelectedComponent } from "../types";
 
-interface ClassDogsProps {
-  filter: string;
-  getFavoriteCount: (arg0: number, arg1: number) => void;
+interface ClassDogProps {
+  selectedComponent: SelectedComponent;
+  handleFavoriteCount: (data: Dog[]) => void;
 }
 
-interface ClassDogsState {
-  activeDogs: Dog[];
-  isLoading: boolean;
-}
-
-class ClassDogs extends Component<ClassDogsProps, ClassDogsState> {
-  constructor(props: ClassDogsProps) {
+class ClassDogs extends Component<
+  ClassDogProps,
+  { allDogs: Dog[]; isLoading: boolean }
+> {
+  constructor(props: ClassDogProps) {
     super(props);
-
     this.state = {
-      activeDogs: [],
+      allDogs: [],
       isLoading: false,
     };
   }
 
-  fetchData = async () => {
-    const { filter, getFavoriteCount } = this.props;
+  async componentDidMount() {
+    this.setState({ isLoading: true });
     try {
-      this.setState({ isLoading: true });
-
       let data: Dog[] = await Requests.getAllDogs();
-      let favorites = 0;
-      let unFavorites = 0;
-      data.forEach((dog) => {
-        if (dog.isFavorite) {
-          favorites += 1;
-        } else unFavorites += 1;
-      });
-      getFavoriteCount(favorites, unFavorites);
-
-      switch (filter) {
-        case "favorited":
-          data = data.filter((dog) => dog.isFavorite);
-          break;
-        case "unfavorited":
-          data = data.filter((dog) => !dog.isFavorite);
-          break;
-        default:
-          break;
-      }
-
-      this.setState({ activeDogs: data });
+      this.setState({ allDogs: data });
+      this.props.handleFavoriteCount(data);
     } catch (error) {
-      console.error("Error fetching data:");
+      console.error("Error fetching data");
     } finally {
+      this.setState({ isLoading: false });
+    }
+  }
+
+  handleTrashIconClick = async (dog: Dog) => {
+    this.setState({ isLoading: true });
+    try {
+      await Requests.deleteDog(dog.id);
+      this.setState(
+        (prevState) => ({
+          allDogs: prevState.allDogs.filter((d) => d.id !== dog.id),
+        }),
+        () => {
+          this.props.handleFavoriteCount(this.state.allDogs);
+          this.setState({ isLoading: false });
+        }
+      );
+      toast.success("Dog Deleted Successfully!");
+    } catch (error) {
+      toast.error("Error deleting dog");
       this.setState({ isLoading: false });
     }
   };
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  componentDidUpdate(prevProps: ClassDogsProps) {
-    if (this.props.filter !== prevProps.filter) {
-      this.fetchData();
+  handleHeartClick = async (dog: Dog) => {
+    this.setState({ isLoading: true });
+    try {
+      await Requests.updateDog({ ...dog, isFavorite: false }, dog.id);
+      this.setState(
+        (prevState) => ({
+          allDogs: prevState.allDogs.map((d) =>
+            d.id === dog.id ? { ...d, isFavorite: false } : d
+          ),
+        }),
+        () => {
+          this.props.handleFavoriteCount(this.state.allDogs);
+          this.setState({ isLoading: false });
+        }
+      );
+    } catch (error) {
+      toast.error("Error updating dog");
+      this.setState({ isLoading: false });
     }
-  }
+  };
+
+  handleEmptyHeartClick = async (dog: Dog) => {
+    this.setState({ isLoading: true });
+    try {
+      await Requests.updateDog({ ...dog, isFavorite: true }, dog.id);
+      this.setState(
+        (prevState) => ({
+          allDogs: prevState.allDogs.map((d) =>
+            d.id === dog.id ? { ...d, isFavorite: true } : d
+          ),
+        }),
+        () => {
+          this.props.handleFavoriteCount(this.state.allDogs);
+          this.setState({ isLoading: false });
+        }
+      );
+    } catch (error) {
+      toast.error("Error updating dog");
+      this.setState({ isLoading: false });
+    }
+  };
 
   render() {
-    const { activeDogs, isLoading } = this.state;
+    const { selectedComponent } = this.props;
+    const { allDogs, isLoading } = this.state;
+
+    const filteredDogs = allDogs.filter((dog): boolean => {
+      switch (selectedComponent) {
+        case "favorited":
+          return dog.isFavorite;
+        case "unfavorited":
+          return !dog.isFavorite;
+        case "createDogForm":
+          return false;
+        case "dogs":
+          return true;
+      }
+    });
 
     return (
       <>
-        {activeDogs.map((dog) => (
+        {filteredDogs.map((dog) => (
           <DogCard
             key={dog.id}
             dog={dog}
-            onTrashIconClick={() => {
-              this.setState({ isLoading: true });
-              Requests.deleteDog(dog.id)
-                .then(() => {
-                  this.setState((prevState) => ({
-                    activeDogs: prevState.activeDogs.filter(
-                      (d) => d.id !== dog.id
-                    ),
-                  }));
-                  toast.success("Dog Deleted Successfully!");
-                })
-                .catch((error) => {
-                  toast.error("Error deleting dog:", error.message);
-                })
-                .finally(() => {
-                  this.setState({ isLoading: false });
-                });
-            }}
-            onHeartClick={() => {
-              this.setState({ isLoading: true });
-              Requests.updateDog({ ...dog, isFavorite: false }, dog.id)
-                .then(() => {
-                  this.setState((prevState) => ({
-                    activeDogs: prevState.activeDogs.map((d) =>
-                      d.id === dog.id ? { ...d, isFavorite: false } : d
-                    ),
-                  }));
-                  toast.success("Dog Unfavorited Successfully!");
-                })
-                .catch((error) => {
-                  toast.error("Error updating dog:", error.message);
-                })
-                .finally(() => {
-                  this.setState({ isLoading: false });
-                });
-            }}
-            onEmptyHeartClick={() => {
-              this.setState({ isLoading: true });
-              Requests.updateDog({ ...dog, isFavorite: true }, dog.id)
-                .then(() => {
-                  this.setState((prevState) => ({
-                    activeDogs: prevState.activeDogs.map((d) =>
-                      d.id === dog.id ? { ...d, isFavorite: true } : d
-                    ),
-                  }));
-                  toast.success("Dog Favorited Successfully!");
-                })
-                .catch((error) => {
-                  toast.error("Error updating dog:", error.message);
-                })
-                .finally(() => {
-                  this.setState({ isLoading: false });
-                });
-            }}
+            onTrashIconClick={() => this.handleTrashIconClick(dog)}
+            onHeartClick={() => this.handleHeartClick(dog)}
+            onEmptyHeartClick={() => this.handleEmptyHeartClick(dog)}
             isLoading={isLoading}
           />
         ))}

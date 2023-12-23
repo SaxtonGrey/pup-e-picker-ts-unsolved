@@ -7,3 +7,9 @@ export type Dog = {
   name: string;
   isLoading?: boolean;
 };
+
+export type SelectedComponent =
+  | "dogs"
+  | "favorited"
+  | "unfavorited"
+  | "createDogForm";

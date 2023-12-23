@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import ClassCreateDogForm from "./ClassCreateDogForm";
 import ClassDogs from "./ClassDogs";
 import ClassSection from "./ClassSection";
+import { Dog, SelectedComponent } from "../types";
 
 interface ClassAppState {
-  selectedComponent: string;
+  selectedComponent: SelectedComponent;
   favoriteCount: number;
   unFavoriteCount: number;
 }
@@ -12,7 +13,6 @@ interface ClassAppState {
 class ClassApp extends Component<object, ClassAppState> {
   constructor(props: object) {
     super(props);
-
     this.state = {
       selectedComponent: "dogs",
       favoriteCount: 0,
@@ -20,17 +20,17 @@ class ClassApp extends Component<object, ClassAppState> {
     };
   }
 
-  handleComponentChange = (componentName: string) => {
+  handleComponentChange = (componentName: SelectedComponent) => {
     this.setState((prevState) => ({
       selectedComponent:
         prevState.selectedComponent === componentName ? "dogs" : componentName,
     }));
   };
 
-  handleFavoriteCount = (favorites: number, unFavorites: number) => {
+  handleFavoriteCount = (data: Dog[]) => {
     this.setState({
-      favoriteCount: favorites,
-      unFavoriteCount: unFavorites,
+      favoriteCount: data.filter((dog) => dog.isFavorite).length,
+      unFavoriteCount: data.filter((dog) => !dog.isFavorite).length,
     });
   };
 
@@ -60,8 +60,8 @@ class ClassApp extends Component<object, ClassAppState> {
             />
           ) : (
             <ClassDogs
-              filter={selectedComponent}
-              getFavoriteCount={this.handleFavoriteCount}
+              selectedComponent={selectedComponent}
+              handleFavoriteCount={this.handleFavoriteCount}
             />
           )}
         </ClassSection>

@@ -1,10 +1,11 @@
 // you can use this type for react children if you so choose
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { SelectedComponent } from "../types";
 
 interface FunctionalSectionProps {
   children: ReactNode;
-  onComponentChange: (componentName: string) => void;
+  handleComponentChange: (componentName: SelectedComponent) => void;
   selectedComponent: string;
   favoriteCount: number;
   unFavoriteCount: number;
@@ -12,7 +13,7 @@ interface FunctionalSectionProps {
 
 export const FunctionalSection = ({
   children,
-  onComponentChange,
+  handleComponentChange: handleComponentChange,
   selectedComponent,
   favoriteCount,
   unFavoriteCount,
@@ -31,7 +32,7 @@ export const FunctionalSection = ({
               selectedComponent === "favorited" ? "active" : ""
             }`}
             onClick={() => {
-              onComponentChange("favorited");
+              handleComponentChange("favorited");
             }}
           >
             favorited ( {favoriteCount} )
@@ -43,7 +44,7 @@ export const FunctionalSection = ({
               selectedComponent === "unfavorited" ? "active" : ""
             }`}
             onClick={() => {
-              onComponentChange("unfavorited");
+              handleComponentChange("unfavorited");
             }}
           >
             unfavorited ( {unFavoriteCount} )
@@ -53,7 +54,7 @@ export const FunctionalSection = ({
               selectedComponent === "createDogForm" ? "active" : ""
             }`}
             onClick={() => {
-              onComponentChange("createDogForm");
+              handleComponentChange("createDogForm");
             }}
           >
             create dog

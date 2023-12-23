@@ -1,4 +1,4 @@
-import React, { Component, FormEvent } from "react";
+import { Component, FormEvent } from "react";
 import { dogPictures } from "../dog-pictures";
 import { Requests } from "../api";
 import { Dog } from "../types";
@@ -24,7 +24,7 @@ class ClassCreateDogForm extends Component<
     this.state = {
       nameInput: "",
       descriptionInput: "",
-      pictureValue: "",
+      pictureValue: dogPictures.BlueHeeler,
     };
   }
 

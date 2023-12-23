@@ -1,10 +1,11 @@
 // you can use `ReactNode` to add a type to the children prop
-import React, { Component, ReactNode } from "react";
+import { Component, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { SelectedComponent } from "../types";
 
 interface ClassSectionProps {
   children: ReactNode;
-  onComponentChange: (componentName: string) => void;
+  onComponentChange: (componentName: SelectedComponent) => void;
   selectedComponent: string;
   favoriteCount: number;
   unFavoriteCount: number;

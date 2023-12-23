@@ -5,15 +5,17 @@ import { Dog } from "../types";
 import toast from "react-hot-toast";
 
 interface FunctionalCreateDogFormProps {
-  onSubmitSuccess: () => void;
+  handleCreateDogFormSubmit: () => void;
 }
 
 export const FunctionalCreateDogForm = ({
-  onSubmitSuccess,
+  handleCreateDogFormSubmit: onSubmitSuccess,
 }: FunctionalCreateDogFormProps) => {
   const [nameInput, setNameInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [pictureValue, setPictureValue] = useState<string>("");
+  const [pictureValue, setPictureValue] = useState<string>(
+    dogPictures.BlueHeeler
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
