@@ -6,7 +6,7 @@ export const Requests = {
   getAllDogs: (): Promise<Dog[]> => {
     return fetch(`${baseUrl}/dogs`).then((response) => response.json());
   },
-  postDog: (newDog: Dog): Promise<Dog> => {
+  postDog: (newDog: Omit<Dog, "id">): Promise<Dog> => {
     return fetch(`${baseUrl}/dogs`, {
       method: "POST",
       headers: {

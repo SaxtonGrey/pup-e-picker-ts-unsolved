@@ -1,11 +1,9 @@
-import { Component, FormEvent } from "react";
+import React, { Component, FormEvent, ChangeEvent } from "react";
 import { dogPictures } from "../dog-pictures";
-import { Requests } from "../api";
 import { Dog } from "../types";
-import toast from "react-hot-toast";
 
 interface ClassCreateDogFormProps {
-  onSubmitSuccess: () => void;
+  createDog: (input: Omit<Dog, "id">) => void;
 }
 
 interface ClassCreateDogFormState {
@@ -20,7 +18,6 @@ class ClassCreateDogForm extends Component<
 > {
   constructor(props: ClassCreateDogFormProps) {
     super(props);
-
     this.state = {
       nameInput: "",
       descriptionInput: "",
@@ -41,40 +38,32 @@ class ClassCreateDogForm extends Component<
       id: 0,
     };
 
-    Requests.postDog(newDog)
-      .then(() => {
-        toast.success("Dog created!");
-        this.setState({
-          nameInput: "",
-          descriptionInput: "",
-          pictureValue: "",
-        });
+    this.props.createDog(newDog);
 
-        this.props.onSubmitSuccess();
-      })
-      .catch((error) => {
-        toast.error("Error creating dog", error);
-      });
+    // Clear input fields
+    this.setState({
+      nameInput: "",
+      descriptionInput: "",
+      pictureValue: dogPictures.BlueHeeler,
+    });
+  };
+
+  handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ pictureValue: e.target.value });
   };
 
   render() {
-    const { nameInput, descriptionInput } = this.state;
+    const { nameInput, descriptionInput, pictureValue } = this.state;
 
     return (
-      <form
-        action=""
-        id="create-dog-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          this.handleSubmit(e);
-        }}
-      >
+      <form action="" id="create-dog-form" onSubmit={this.handleSubmit}>
         <h4>Create a New Dog</h4>
         <label htmlFor="name">Dog Name</label>
         <input
           type="text"
           disabled={false}
           value={nameInput}
+          name="nameInput"
           onChange={(e) => {
             this.setState({ nameInput: e.target.value });
           }}
@@ -94,17 +83,16 @@ class ClassCreateDogForm extends Component<
         <label htmlFor="picture">Select an Image</label>
         <select
           id=""
+          value={pictureValue}
           onChange={(e) => {
             this.setState({ pictureValue: e.target.value });
           }}
         >
-          {Object.entries(dogPictures).map(([label, pictureValue]) => {
-            return (
-              <option value={pictureValue} key={pictureValue}>
-                {label}
-              </option>
-            );
-          })}
+          {Object.entries(dogPictures).map(([label, pictureValue]) => (
+            <option value={pictureValue} key={pictureValue}>
+              {label}
+            </option>
+          ))}
         </select>
         <input type="submit" />
       </form>

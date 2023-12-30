@@ -1,15 +1,13 @@
 import { dogPictures } from "../dog-pictures";
 import React, { useState } from "react";
-import { Requests } from "../api";
 import { Dog } from "../types";
-import toast from "react-hot-toast";
 
 interface FunctionalCreateDogFormProps {
-  handleCreateDogFormSubmit: () => void;
+  createDog: (input: Omit<Dog, "id">) => void;
 }
 
 export const FunctionalCreateDogForm = ({
-  handleCreateDogFormSubmit: onSubmitSuccess,
+  createDog,
 }: FunctionalCreateDogFormProps) => {
   const [nameInput, setNameInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
@@ -27,18 +25,10 @@ export const FunctionalCreateDogForm = ({
       isFavorite: false,
       id: 0,
     };
-
-    Requests.postDog(newDog)
-      .then(() => {
-        toast.success("Dog created!");
-        setNameInput("");
-        setDescriptionInput("");
-        setPictureValue("");
-        onSubmitSuccess();
-      })
-      .catch((error) => {
-        toast.error("Error creating dog", error);
-      });
+    createDog(newDog);
+    setNameInput("");
+    setDescriptionInput("");
+    setPictureValue(dogPictures.BlueHeeler);
   };
 
   return (

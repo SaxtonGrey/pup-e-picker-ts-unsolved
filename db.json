@@ -11,35 +11,35 @@
       "name": "Reggie",
       "image": "/assets/cowardly.png",
       "description": "National calculating Toys Ford the",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 3
     },
     {
       "name": "Seth",
       "image": "/assets/cowardly.png",
       "description": "Jazz Rubber itaque Cargo Specialist payment extremely eyeballs",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 4
     },
     {
       "name": "Veronica",
       "image": "/assets/chihuahua.avif",
       "description": "sympathetically Strategist compressing West Southeast District whiteboard around",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 5
     },
     {
       "name": "Estefania",
       "image": "/assets/blue-heeler.png",
       "description": "Steel where contract East Technician",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 6
     },
     {
       "name": "Jarrett",
       "image": "/assets/corgi.png",
       "description": "abrade Account Bicycle Neutrois to yuck Southwest",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 7
     },
     {
@@ -81,14 +81,14 @@
       "name": "Amber",
       "image": "/assets/dalmation.png",
       "description": "Agender leverage nourish Group Virginia Cisgender Minnesota Southeast",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 13
     },
     {
       "name": "Carley",
       "image": "/assets/corgi.png",
       "description": "virtual synthesizing UDP Yttrium Paradigm Refined Electronic",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": 14
     },
     {
@@ -116,7 +116,7 @@
       "name": "Clara",
       "image": "/assets/corgi.png",
       "description": "capacity orchid lime experiences Interactions",
-      "isFavorite": false,
+      "isFavorite": true,
       "id": 18
     },
     {
@@ -153,6 +153,13 @@
       "image": "/assets/boxer.jpeg",
       "isFavorite": false,
       "id": 23
+    },
+    {
+      "name": "test 2",
+      "description": "test here doggy",
+      "image": "/assets/boxer.jpeg",
+      "isFavorite": false,
+      "id": 24
     }
   ]
 }

@@ -8,7 +8,7 @@ interface FunctionalSectionProps {
   handleComponentChange: (componentName: SelectedComponent) => void;
   selectedComponent: string;
   favoriteCount: number;
-  unFavoriteCount: number;
+  unfavoriteCount: number;
 }
 
 export const FunctionalSection = ({
@@ -16,7 +16,7 @@ export const FunctionalSection = ({
   handleComponentChange: handleComponentChange,
   selectedComponent,
   favoriteCount,
-  unFavoriteCount,
+  unfavoriteCount,
 }: FunctionalSectionProps) => {
   return (
     <section id="main-section">
@@ -47,7 +47,7 @@ export const FunctionalSection = ({
               handleComponentChange("unfavorited");
             }}
           >
-            unfavorited ( {unFavoriteCount} )
+            unfavorited ( {unfavoriteCount} )
           </div>
           <div
             className={`selector ${
